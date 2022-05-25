@@ -9,20 +9,10 @@ type rec element<'props> = {
   count: int,
 }
 
-type elementInput<'props> = {
+type rec elementInput<'props> = {
   tagName: string,
   props: option<'props>,
-  children: option<array<element<'props>>>,
-}
-
-let toInput = (el: element<'props>): elementInput<'props> => {
-  let {tagName, props, children} = el
-
-  {
-    tagName: tagName,
-    props: Some(props),
-    children: Some(children),
-  }
+  children: option<array<elementInput<'props>>>,
 }
 
 let rec createElement = (input: elementInput<'props>): element<'props> => {
@@ -31,12 +21,10 @@ let rec createElement = (input: elementInput<'props>): element<'props> => {
   let props = Belt.Option.getWithDefault(props, Js.Obj.empty())
   let children = Belt.Option.getWithDefault(children, [])
 
-  let createChild = c => toInput(c)->createElement
-
   {
     tagName: tagName,
     props: props,
-    children: Js.Array.map(createChild, children),
+    children: Js.Array.map(createElement, children),
     key: "", // TODO
     count: 1, // TODO
   }
