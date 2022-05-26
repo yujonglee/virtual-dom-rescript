@@ -21,12 +21,20 @@ let rec createElement = (input: elementInput<'props>): element<'props> => {
   let props = Belt.Option.getWithDefault(props, Js.Obj.empty())
   let children = Belt.Option.getWithDefault(children, [])
 
+  let hasKey = "key"->Js.Array.includes
+  let key = if props->Js.Obj.keys->hasKey {
+    props["key"]
+  } else {
+    Js.log(`Key is not provided for '${tagName}' element.`)
+    "UNDEFINED"
+  }
+
   {
     tagName: tagName,
     props: props,
     children: Js.Array.map(createElement, children),
-    key: "", // TODO
-    count: 1, // TODO
+    key: key,
+    count: Js.Array.length(children), // TODO
   }
 }
 
